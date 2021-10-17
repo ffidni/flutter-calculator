@@ -77,17 +77,26 @@ class _CalculatorState extends State<Calculator> {
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
                             Expanded(
-                              child: FlatButton(
-                                onPressed: () => _changeCalcState(true),
-                                child: Text(
-                                  "123",
-                                  style: TextStyle(
-                                    fontSize: 28,
-                                    color: _isCurrentNumber
-                                        ? Colors.white
-                                        : Color(0xff898989),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(20),
+                                    topLeft: Radius.circular(20),
+                                  ),
+                                ),
+                                child: FlatButton(
+                                  onPressed: () => _changeCalcState(true),
+                                  child: Text(
+                                    "123",
+                                    style: TextStyle(
+                                      fontSize: 28,
+                                      color: _isCurrentNumber
+                                          ? Colors.white
+                                          : Color(0xff898989),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -102,17 +111,26 @@ class _CalculatorState extends State<Calculator> {
                       Expanded(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: <Widget>[
                             Expanded(
-                              child: FlatButton(
-                                onPressed: () => _changeCalcState(false),
-                                child: Text(
-                                  "f(x)",
-                                  style: TextStyle(
-                                    fontSize: 28,
-                                    color: _isCurrentNumber
-                                        ? Color(0xff898989)
-                                        : Colors.white,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(20),
+                                    topLeft: Radius.circular(20),
+                                  ),
+                                ),
+                                child: FlatButton(
+                                  onPressed: () => _changeCalcState(false),
+                                  child: Text(
+                                    "f(x)",
+                                    style: TextStyle(
+                                      fontSize: 28,
+                                      color: _isCurrentNumber
+                                          ? Color(0xff898989)
+                                          : Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
