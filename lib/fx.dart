@@ -188,7 +188,7 @@ class _FunctionState extends State<Function> with Result {
                   child: Text(
                     "EXP",
                     style: TextStyle(
-                      fontSize: 32,
+                      fontSize: 28,
                       color: Colors.white,
                     ),
                   ),
@@ -202,7 +202,7 @@ class _FunctionState extends State<Function> with Result {
                   child: Text(
                     "mod",
                     style: TextStyle(
-                      fontSize: 32,
+                      fontSize: 28,
                       color: Colors.white,
                     ),
                   ),

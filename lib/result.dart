@@ -13,22 +13,10 @@ mixin Result {
     "sin": "sin()",
     "cos": "cos()",
     "tan": "tan()",
-    "In": "In()",
     "e": "$e",
     "%": "/100",
   };
-  var opr = [
-    "+",
-    "-",
-    "/",
-    "*",
-    "÷",
-    "×",
-    "%",
-    "!",
-    "^",
-    "√"
-  ];
+  var opr = ["+", "-", "/", "*", "÷", "×", "%", "!", "^", "√", "mod", "EXP"];
 
   double fact(double n) {
     if (n == 1 || n == 0) {
@@ -97,12 +85,8 @@ mixin Result {
 
   void clearField() {
     parent.setState(() {
-      parent.resultField = [
-        "0"
-      ];
-      parent.evalField = [
-        "0"
-      ];
+      parent.resultField = ["0"];
+      parent.evalField = ["0"];
     });
   }
 
@@ -116,12 +100,8 @@ mixin Result {
       result = "Error";
     }
     parent.setState(() {
-      parent.resultField = [
-        result
-      ];
-      parent.evalField = [
-        result
-      ];
+      parent.resultField = [result];
+      parent.evalField = [result];
     });
     parent.isResult = true;
   }
@@ -132,13 +112,7 @@ mixin Result {
     List structure = func.replaceAll("(", " ").replaceAll(")", " ").split(" ");
     structure.add(value);
     for (String char in structure) {
-      List funcs = [
-        "log",
-        "tan",
-        "sin",
-        "cos",
-        "sqrt"
-      ];
+      List funcs = ["log", "tan", "sin", "cos", "sqrt"];
       if (funcs.contains(char)) {
         result += "$char(";
         parenthesess++;
@@ -164,13 +138,18 @@ mixin Result {
   List addKey(String key) {
     _clearIfResult(key);
 
-    if (parent.resultField.length == 1 && parent.resultField[0] == "0" && !opr.contains(key)) {
+    if (parent.resultField.length == 1 &&
+        parent.resultField[0] == "0" &&
+        !opr.contains(key)) {
       parent.resultField = [];
       parent.evalField = [];
     }
     String evalKey = evalChar.containsKey(key) ? evalChar[key] : key;
-    String resultKey = "()%.0123456789!^".contains(key) || key.length == 2 ? key : " $key ";
-    var lastElement = parent.evalField.length > 0 ? parent.evalField[parent.evalField.length - 1] : null;
+    String resultKey =
+        "()%.0123456789!^".contains(key) || key.length == 2 ? key : " $key ";
+    var lastElement = parent.evalField.length > 0
+        ? parent.evalField[parent.evalField.length - 1]
+        : null;
 
     if (lastElement == null) {
       if (key != "E") {
@@ -178,19 +157,11 @@ mixin Result {
         parent.evalField.add(evalKey);
       }
     } else {
-      if ([
-        "Error",
-        "Infinity"
-      ].contains(parent.resultField[0])) {
+      if (["Error", "Infinity"].contains(parent.resultField[0])) {
         clearField();
       }
       if (lastElement.length > 3 &&
-          [
-            "cos",
-            "sin",
-            "tan",
-            "log"
-          ].contains(lastElement.substring(0, 3))) {
+          ["cos", "sin", "tan", "log"].contains(lastElement.substring(0, 3))) {
         if (key == ")") {
           int left = "(".allMatches(lastElement).length;
           int right = ")".allMatches(lastElement).length;
@@ -198,29 +169,40 @@ mixin Result {
             parent.resultField.add(resultKey);
             parent.evalField.add(evalKey);
           } else {
-            parent.evalField[parent.evalField.length - 1] = updateFunc(lastElement, evalKey);
-            parent.resultField[parent.evalField.length - 1] = updateFunc(parent.resultField[parent.evalField.length - 1], resultKey);
+            parent.evalField[parent.evalField.length - 1] =
+                updateFunc(lastElement, evalKey);
+            parent.resultField[parent.evalField.length - 1] = updateFunc(
+                parent.resultField[parent.evalField.length - 1], resultKey);
           }
         } else {
-          parent.evalField[parent.evalField.length - 1] = updateFunc(lastElement, evalKey);
-          parent.resultField[parent.evalField.length - 1] = updateFunc(parent.resultField[parent.evalField.length - 1], resultKey);
+          parent.evalField[parent.evalField.length - 1] =
+              updateFunc(lastElement, evalKey);
+          parent.resultField[parent.evalField.length - 1] = updateFunc(
+              parent.resultField[parent.evalField.length - 1], resultKey);
         }
       } else if (evalKey == "!" && isNumeric(lastElement)) {
         String factValue = fact(double.parse(lastElement)).toString();
         parent.resultField.add(resultKey);
         parent.evalField[parent.evalField.length - 1] = factValue;
       } else if (key == "√") {
-        parent.resultField[parent.resultField.length - 1] = "√${parent.resultField[parent.resultField.length - 1]}";
-        parent.evalField[parent.evalField.length - 1] = "sqrt(${parent.evalField[parent.evalField.length - 1]})";
+        parent.resultField[parent.resultField.length - 1] =
+            "√${parent.resultField[parent.resultField.length - 1]}";
+        parent.evalField[parent.evalField.length - 1] =
+            "sqrt(${parent.evalField[parent.evalField.length - 1]})";
       } else {
-        if ("πe!".contains(parent.resultField[parent.resultField.length - 1].replaceAll(" ", ""))) {
-          resultKey = " × " + resultKey;
-          evalKey = "*" + evalKey;
+        if ("πe!".contains(parent.resultField[parent.resultField.length - 1]
+                .replaceAll(" ", "")) &&
+            !opr.contains(evalKey)) {
+          parent.resultField.add(" × ");
           parent.resultField.add(resultKey);
+          parent.evalField.add("*");
           parent.evalField.add(evalKey);
-        } else if (parent.resultField[parent.resultField.length - 1].contains("√")) {
-          parent.resultField[parent.resultField.length - 1] = parent.resultField[parent.resultField.length - 1] + resultKey;
-          parent.evalField[parent.evalField.length - 1] = updateFunc(parent.evalField[parent.evalField.length - 1], evalKey);
+        } else if (parent.resultField[parent.resultField.length - 1]
+            .contains("√")) {
+          parent.resultField[parent.resultField.length - 1] =
+              parent.resultField[parent.resultField.length - 1] + resultKey;
+          parent.evalField[parent.evalField.length - 1] = updateFunc(
+              parent.evalField[parent.evalField.length - 1], evalKey);
         } else {
           parent.resultField.add(resultKey);
           parent.evalField.add(evalKey);

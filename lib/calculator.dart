@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'keys.dart';
 import 'fx.dart';
-import 'result.dart';
-import 'package:flutter/services.dart';
 
 class Calculator extends StatefulWidget {
   @override
@@ -33,10 +30,6 @@ class _CalculatorState extends State<Calculator> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
     return Scaffold(
       backgroundColor: Color(0xff444444),
       body: Column(
@@ -76,7 +69,6 @@ class _CalculatorState extends State<Calculator> {
               ),
             ),
             width: double.infinity,
-            //height: double.infinity,
             child: Column(
               children: <Widget>[
                 IntrinsicHeight(
@@ -86,13 +78,17 @@ class _CalculatorState extends State<Calculator> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            FlatButton(
-                              onPressed: () => _changeCalcState(true),
-                              child: Text(
-                                "123",
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  color: _isCurrentNumber ? Colors.white : Color(0xff898989),
+                            Expanded(
+                              child: FlatButton(
+                                onPressed: () => _changeCalcState(true),
+                                child: Text(
+                                  "123",
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    color: _isCurrentNumber
+                                        ? Colors.white
+                                        : Color(0xff898989),
+                                  ),
                                 ),
                               ),
                             ),
@@ -107,13 +103,17 @@ class _CalculatorState extends State<Calculator> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            FlatButton(
-                              onPressed: () => _changeCalcState(false),
-                              child: Text(
-                                "Fx",
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  color: _isCurrentNumber ? Color(0xff898989) : Colors.white,
+                            Expanded(
+                              child: FlatButton(
+                                onPressed: () => _changeCalcState(false),
+                                child: Text(
+                                  "f(x)",
+                                  style: TextStyle(
+                                    fontSize: 28,
+                                    color: _isCurrentNumber
+                                        ? Color(0xff898989)
+                                        : Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
