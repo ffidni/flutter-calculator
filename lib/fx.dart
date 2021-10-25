@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 import 'result.dart';
 
 class Function extends StatefulWidget {
@@ -92,7 +91,7 @@ class _FunctionState extends State<Function> with Result {
                 flex: 1,
                 child: FlatButton(
                   color: Color(0xff676767),
-                  onPressed: () => addKey("cos()"),
+                  onPressed: () => addKey("cos("),
                   child: Text(
                     "cos",
                     style: TextStyle(
@@ -106,7 +105,7 @@ class _FunctionState extends State<Function> with Result {
                 flex: 1,
                 child: FlatButton(
                   color: Color(0xff676767),
-                  onPressed: () => addKey("sin()"),
+                  onPressed: () => addKey("sin("),
                   child: Text(
                     "sin",
                     style: TextStyle(
@@ -120,7 +119,7 @@ class _FunctionState extends State<Function> with Result {
                 flex: 1,
                 child: FlatButton(
                   color: Color(0xff676767),
-                  onPressed: () => addKey("tan()"),
+                  onPressed: () => addKey("tan("),
                   child: Text(
                     "tan",
                     style: TextStyle(
@@ -134,7 +133,7 @@ class _FunctionState extends State<Function> with Result {
                 flex: 1,
                 child: FlatButton(
                   color: Color(0xff676767),
-                  onPressed: () => addKey("log()"),
+                  onPressed: () => addKey("log("),
                   child: Text(
                     "log",
                     style: TextStyle(

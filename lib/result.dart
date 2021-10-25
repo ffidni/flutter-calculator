@@ -9,14 +9,12 @@ mixin Result {
     ".": ".",
     "π": "pi",
     "mod": "%",
-    "log": "log()",
-    "sin": "sin()",
-    "cos": "cos()",
-    "tan": "tan()",
     "e": "$e",
     "%": "/100",
   };
   var opr = ["+", "-", "/", "*", "÷", "×", "%", "!", "^", "√", "mod", "EXP"];
+  var funcs = ["log(", "cos(", "sin(", "tan(", "sqrt"];
+  //bool isFunc = false;
 
   double fact(double n) {
     if (n == 1 || n == 0) {
@@ -39,24 +37,6 @@ mixin Result {
       result += char;
     }
     return result;
-  }
-
-  void seperateField() {
-    List resultField = [];
-    List evalField = [];
-    for (String eval in parent.resultField) {
-      eval.runes.forEach((int idx) {
-        var char = new String.fromCharCode(idx);
-        resultField.add(char);
-      });
-    }
-    for (String eval in parent.evalField) {
-      eval.runes.forEach((int idx) {
-        var char = new String.fromCharCode(idx);
-        evalField.add(char);
-      });
-    }
-    changeParentState(resultField, evalField);
   }
 
   void changeParentState(List resultField, List evalField) {
@@ -110,9 +90,9 @@ mixin Result {
     String result = "";
     int parenthesess = 0;
     List structure = func.replaceAll("(", " ").replaceAll(")", " ").split(" ");
+    List funcs = ["log", "tan", "sin", "cos", "sqrt"];
     structure.add(value);
     for (String char in structure) {
-      List funcs = ["log", "tan", "sin", "cos", "sqrt"];
       if (funcs.contains(char)) {
         result += "$char(";
         parenthesess++;
@@ -135,9 +115,16 @@ mixin Result {
     }
   }
 
+  String createSqrt(List elements, bool isResult) {
+    String result = "";
+    for (int i = 0; i < elements.length; i++) {
+      result += elements[i];
+    }
+    return isResult ? "√$result" : "sqrt($result)";
+  }
+
   List addKey(String key) {
     _clearIfResult(key);
-
     if (parent.resultField.length == 1 &&
         parent.resultField[0] == "0" &&
         !opr.contains(key)) {
@@ -145,8 +132,12 @@ mixin Result {
       parent.evalField = [];
     }
     String evalKey = evalChar.containsKey(key) ? evalChar[key] : key;
-    String resultKey =
-        "()%.0123456789!^".contains(key) || key.length == 2 ? key : " $key ";
+    String resultKey = "()%.0123456789!^".contains(key) ||
+            key.length == 2 ||
+            funcs.contains(key)
+        ? key
+        : " $key ";
+    print("$evalKey, $resultKey");
     var lastElement = parent.evalField.length > 0
         ? parent.evalField[parent.evalField.length - 1]
         : null;
@@ -159,36 +150,31 @@ mixin Result {
     } else {
       if (["Error", "Infinity"].contains(parent.resultField[0])) {
         clearField();
-      }
-      if (lastElement.length > 3 &&
-          ["cos", "sin", "tan", "log"].contains(lastElement.substring(0, 3))) {
-        if (key == ")") {
-          int left = "(".allMatches(lastElement).length;
-          int right = ")".allMatches(lastElement).length;
-          if (left == right) {
-            parent.resultField.add(resultKey);
-            parent.evalField.add(evalKey);
-          } else {
-            parent.evalField[parent.evalField.length - 1] =
-                updateFunc(lastElement, evalKey);
-            parent.resultField[parent.evalField.length - 1] = updateFunc(
-                parent.resultField[parent.evalField.length - 1], resultKey);
-          }
-        } else {
-          parent.evalField[parent.evalField.length - 1] =
-              updateFunc(lastElement, evalKey);
-          parent.resultField[parent.evalField.length - 1] = updateFunc(
-              parent.resultField[parent.evalField.length - 1], resultKey);
-        }
       } else if (evalKey == "!" && isNumeric(lastElement)) {
         String factValue = fact(double.parse(lastElement)).toString();
-        parent.resultField.add(resultKey);
+        parent.resultField.add(key);
         parent.evalField[parent.evalField.length - 1] = factValue;
+        print(parent.resultField);
+      } else if (funcs.contains(key)) {
       } else if (key == "√") {
-        parent.resultField[parent.resultField.length - 1] =
-            "√${parent.resultField[parent.resultField.length - 1]}";
-        parent.evalField[parent.evalField.length - 1] =
-            "sqrt(${parent.evalField[parent.evalField.length - 1]})";
+        int idx = 0;
+        for (int i = parent.evalField.length - 1; i >= 0; i--) {
+          String evalPrev = parent.evalField[i];
+          if (!isNumeric(evalPrev)) {
+            print("!isNumeric -> ${!isNumeric(evalPrev)}, $evalPrev");
+            break;
+          } else {
+            idx = i;
+          }
+        }
+        String newResult = createSqrt(
+            parent.resultField.sublist(idx, parent.resultField.length), true);
+        String newEval = createSqrt(
+            parent.evalField.sublist(idx, parent.evalField.length), false);
+        parent.resultField = parent.resultField.sublist(0, idx);
+        parent.evalField = parent.evalField.sublist(0, idx);
+        parent.resultField.add(newResult);
+        parent.evalField.add(newEval);
       } else {
         if ("πe!".contains(parent.resultField[parent.resultField.length - 1]
                 .replaceAll(" ", "")) &&
@@ -199,6 +185,7 @@ mixin Result {
           parent.evalField.add(evalKey);
         } else if (parent.resultField[parent.resultField.length - 1]
             .contains("√")) {
+          print(parent.resultField);
           parent.resultField[parent.resultField.length - 1] =
               parent.resultField[parent.resultField.length - 1] + resultKey;
           parent.evalField[parent.evalField.length - 1] = updateFunc(
